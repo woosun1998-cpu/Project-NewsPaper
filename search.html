@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>근현대 신문사 - 옛 기사 검색</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+    <link rel="stylesheet" href="/NewsPaper/search/searchcss.css">
+</head>
+<body>
+
+    <header id="fixed-header">
+        <div class="header-logo">
+            <a href="/NewsPaper/firstpage/main.html"><img src="/NewsPaper/image/로고2.png" alt="로고"></a>
+        </div>
+        <nav class="header-menu">
+            <a href="/NewsPaper/todaynews/TodayNews.html">오늘의 뉴스</a>
+            <a href="/NewsPaper/search/search.html" class="active-menu">옛기사 검색</a>
+            <a href="/NewsPaper/historyman/Historyman.html">그때 그 인물</a>
+            <a href="/NewsPaper/statistics/statistics.html">통계</a>
+          <a href="/NewsPaper/login/loginhtml.html" class="login-btn" id="loginLink">로그인</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="search-section">
+            <div class="container">
+                <div class="search-engine-box">
+                    
+                    <div class="search-tabs">
+                        <span class="tab active" data-target="search-keyword">KEYWORD SEARCH</span>
+                        <span class="tab" data-target="search-date">DATE SEARCH</span>
+                    </div>
+
+                    <div id="search-keyword" class="search-content active">
+                        <div class="capsule-input-wrapper">
+                            <input type="text" id="keyword-input" placeholder="검색어를 입력하세요 (예: 독립운동)">
+                            <button class="search-icon-btn" onclick="searchNews()">🔍</button>
+                        </div>
+                    </div>
+
+                    <div id="search-date" class="search-content">
+                        <div class="capsule-input-wrapper date-picker-wrapper">
+                            <input type="date" id="date-start" class="date-input">
+                            <span class="date-sep">~</span>
+                            <input type="date" id="date-end" class="date-input">
+                            <button class="search-icon-btn" onclick="searchByDate()">🔍</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section class="result-section" id="search-result-section" style="display: none;">
+            <div class="search-result-info">
+                <div class="result-text">
+                    SEARCH RESULTS <span id="search-count" style="color:var(--neon-green)">0</span>
+                </div>
+                <div class="result-line"></div>
+            </div>
+            <div class="news-history">
+                <div class="card-grid" id="search-result-container"></div>
+            </div>
+        </section>
+
+        <section class="result-section" id="default-news-section">
+            <div class="search-result-info">
+                <div class="result-text" style="opacity: 0.8;">
+                    100년 전, 오늘 가장 핫했던 소식
+                </div>
+                <div class="result-line" style="background: linear-gradient(90deg, rgba(255,255,255,0.3), transparent); box-shadow:none;"></div>
+            </div>
+
+            <div class="news-history">
+                <div class="card-grid" id="default-news-container"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="/NewsPaper/firstpage/script.js"></script>
+    <script src="/NewsPaper/search/searchjs.js"></script>
+</body>
+</html>

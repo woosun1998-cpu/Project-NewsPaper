@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>근현대 신문사 - 통계 분석실</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root { --neon-green: #00ff9d; --bg-dark: #0a0a0a; --card-bg: #141414; }
+        body { background-color: var(--bg-dark); color: white; font-family: 'Pretendard', sans-serif; margin: 0; }
+        a { text-decoration: none; color: white; }
+
+        /* [1] 헤더: 로고를 공중에 띄워 헤더 크기에 영향을 주지 않게 함 */
+        #fixed-header {
+            position: fixed; top: 0; left: 0; width: 100%; 
+            height: 80px; /* ★ 헤더 높이 고정 ★ */
+            background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex; justify-content: flex-end; /* 메뉴를 오른쪽으로 밀기 */
+            align-items: center; padding: 0 50px; z-index: 10000; box-sizing: border-box;
+        }
+        
+        /* 로고 절대 위치 설정: 헤더 칸 변화 없이 이미지만 커짐 */
+        .header-logo { 
+            position: absolute; left: 50px; top: 50%; transform: translateY(-50%); 
+        }
+        .header-logo img { 
+            height: 150px; /* ★ 각하께서 원하시는 150px ★ */
+            width: auto; 
+            filter: drop-shadow(0 0 10px rgba(0, 255, 157, 0.3));
+        }
+
+        .header-menu { display: flex; gap: 30px; align-items: center; }
+        .header-menu a { 
+            color: rgba(255,255,255,0.7); font-weight: 700; font-size: 1rem;
+            white-space: nowrap; transition: 0.3s; 
+        }
+        .header-menu a:hover, .header-menu a.active-menu { color: var(--neon-green); }
+
+        .login-btn { 
+            border: 1px solid var(--neon-green); padding: 8px 20px; 
+            border-radius: 4px; color: var(--neon-green) !important; 
+            margin-left: 20px;
+        }
+
+        /* [2] 대시보드 레이아웃: 한 영역 안에 보기 좋게 조절 */
+        .dashboard-container { max-width: 1600px; margin: 150px auto 50px; padding: 0 50px; }
+        .dashboard-title { font-family: 'Orbitron', sans-serif; font-size: 2.5rem; color: var(--neon-green); margin-bottom: 30px; }
+
+        .chart-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; }
+        
+        .chart-card { 
+            background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 15px; padding: 25px; 
+            height: 420px; /* ★ 한 영역 안에 들어오는 높이 ★ */
+            display: flex; flex-direction: column;
+        }
+        
+        .chart-card h3 { margin-top: 0; color: white; border-left: 4px solid var(--neon-green); padding-left: 15px; margin-bottom: 20px; font-size: 1.2rem; }
+        .chart-wrapper { flex-grow: 1; position: relative; min-height: 0; }
+
+        .full-width { grid-column: span 2; height: 450px; }
+    </style>
+</head>
+<body>
+
+    <header id="fixed-header">
+        <div class="header-logo">
+            <a href="/NewsPaper/firstpage/main.html"><img src="/NewsPaper/image/로고2.png" alt="로고"></a>
+        </div>
+        <nav class="header-menu">
+            <a href="/NewsPaper/todaynews/TodayNews.html">오늘의 뉴스</a>
+            <a href="/NewsPaper/search/search.html">옛기사 검색</a>
+            <a href="/NewsPaper/historyman/Historyman.html">그때 그 인물</a>
+            <a href="/NewsPaper/statistics/statistics.html" class="active-menu">통계</a>
+            <a href="/NewsPaper/login/loginhtml.html" class="login-btn">로그인</a>
+        </nav>
+    </header>
+
+    <div class="dashboard-container">
+        <h1 class="dashboard-title">ARCHIVE ANALYTICS</h1>
+        <div class="chart-grid">
+            <div class="chart-card">
+                <h3>📰 신문사별 기사 보유량 (TOP 15)</h3>
+                <div class="chart-wrapper"><canvas id="pressCanvas"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <h3>⚖️ 기사 주제별 분포</h3>
+                <div class="chart-wrapper"><canvas id="topicCanvas"></canvas></div>
+            </div>
+            <div class="chart-card full-width">
+                <h3>📈 시대별 발행량 추이 (1883 - 1966)</h3>
+                <div class="chart-wrapper"><canvas id="yearCanvas"></canvas></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        fetch('news_data.json')
+            .then(res => res.json())
+            .then(data => {
+                // 1. 신문사 차트
+                const pressSorted = data.pressCompanies.sort((a, b) => Number(b.건수) - Number(a.건수)).slice(0, 15);
+                new Chart(document.getElementById('pressCanvas'), {
+                    type: 'bar',
+                    data: {
+                        labels: pressSorted.map(d => d.신문사),
+                        datasets: [{ label: '누적 기사 수', data: pressSorted.map(d => Number(d.건수)), backgroundColor: 'rgba(0, 255, 157, 0.7)', borderRadius: 5 }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+
+                // 2. 주제 차트 (오류 방지를 위해 키값 재점검)
+                const topicData = data.articleTopics[0] || data.articleTopics; // 배열 구조 대응
+                new Chart(document.getElementById('topicCanvas'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: topicData.map(d => d["기사 주제"] || d.label),
+                        datasets: [{ 
+                            data: topicData.map(d => Number(d.건수 || d.value)), 
+                            backgroundColor: ['#00ff9d', '#00cc7a', '#00995c', '#ffffff', '#a0a0a0', '#444444'],
+                            borderWidth: 0 
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
+                });
+
+                // 3. 연도 차트
+                const yearData = data.publishYears[0] || data.publishYears;
+                new Chart(document.getElementById('yearCanvas'), {
+                    type: 'line',
+                    data: {
+                        labels: yearData.map(d => d.발행년도 || d.label),
+                        datasets: [{ label: '발행 건수', data: yearData.map(d => Number(d.건수 || d.value)), borderColor: '#00ff9d', fill: true, backgroundColor: 'rgba(0, 255, 157, 0.1)', tension: 0.4 }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            });
+    </script>
+</body>
+</html>

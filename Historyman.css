@@ -1,0 +1,307 @@
+@charset "UTF-8";
+
+/* [0] 전역 변수: 네온 그린 & 다크 테마 */
+:root {
+    --chernobyl-gold: #00ff9d; /* 네온 그린 */
+    --neon-green: #00ff9d;
+    --bg-dark: #0a0a0a;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* 초기 상태: 스크롤 잠금 */
+body { 
+    width: 100%; background-color: var(--bg-dark);
+    overflow: hidden; /* 처음엔 스크롤 불가능 (스크립트에서 해제) */
+    font-family: 'Pretendard', sans-serif; 
+}
+
+/* [1] 헤더 */
+#fixed-header {
+    position: fixed; top: 0; left: 0; width: 100%; height: 80px;
+    background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 50px; z-index: 10000;
+}
+.header-logo img { height: 150px; width: auto; }
+.header-menu { display: flex; gap: 40px; }
+.header-menu a {
+    color: rgba(255, 255, 255, 0.6); text-decoration: none; font-weight: 700;
+    font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s;
+}
+.header-menu a:hover, .header-menu .active-menu { color: var(--neon-green); text-shadow: 0 0 10px rgba(0,255,157,0.5); }
+
+
+/* [2] 인트로 (3D 슬라이더) */
+#intro-screen {
+    width: 100%; height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: radial-gradient(circle at 50% -20%, #111 0%, #000000 60%);
+    position: relative; z-index: 100; overflow: hidden;
+}
+
+.intro-title {
+    color: white; font-size: 3.5rem; margin-bottom: 70px;
+    font-family: 'Orbitron', sans-serif; font-weight: 900; 
+    text-transform: uppercase; letter-spacing: 5px;
+    text-shadow: 0 0 20px rgba(0, 255, 157, 0.6); 
+}
+.intro-title span {
+    background: linear-gradient(90deg, #00ff9d, #00b8ff);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+.intro-arrow {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5); border: 2px solid rgba(0, 255, 157, 0.3);
+    color: var(--neon-green); font-size: 1.5rem; width: 60px; height: 60px; 
+    border-radius: 50%; cursor: pointer; z-index: 200; 
+    display: flex; align-items: center; justify-content: center; transition: 0.3s;
+    box-shadow: 0 0 15px rgba(0, 255, 157, 0.2);
+}
+.intro-arrow:hover { background: var(--neon-green); color: black; box-shadow: 0 0 30px rgba(0, 255, 157, 0.8); }
+.intro-arrow.left { left: 50px; }
+.intro-arrow.right { right: 50px; }
+
+.hero-selection-container {
+    display: flex; align-items: center; justify-content: center;
+    height: 500px; width: 100%; perspective: 1200px; position: relative;
+}
+
+.hero-card {
+    width: 320px; height: 500px; border-radius: 20px;
+    position: absolute; cursor: pointer; transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+    background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.8); overflow: hidden;
+}
+.hero-card img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%) brightness(0.6); transition: 0.5s; }
+
+.card-overlay {
+    position: absolute; bottom: 0; left: 0; width: 100%; padding: 30px;
+    background: linear-gradient(to top, #000 10%, transparent); 
+    transform: translateY(20px); opacity: 0; transition: 0.4s;
+}
+.role-badge { 
+    color: var(--neon-green); font-size: 0.8rem; font-family: 'Orbitron', sans-serif; 
+    letter-spacing: 2px; display: block; margin-bottom: 5px; text-transform: uppercase;
+}
+.card-overlay h3 { font-size: 2.5rem; color: white; margin: 0; font-family: 'Pretendard', sans-serif; font-weight: 800; }
+
+.hero-card.center { 
+    transform: translateX(0) scale(1.1); z-index: 10; 
+    border: 2px solid var(--neon-green); 
+    box-shadow: 0 0 50px rgba(0, 255, 157, 0.3), inset 0 0 20px rgba(0, 255, 157, 0.1);
+}
+.hero-card.center img { filter: grayscale(0%) brightness(1.1); }
+.hero-card.center .card-overlay { transform: translateY(0); opacity: 1; }
+.hero-card.left-pos { transform: translateX(-380px) scale(0.85) rotateY(30deg); z-index: 1; opacity: 0.4; }
+.hero-card.right-pos { transform: translateX(380px) scale(0.85) rotateY(-30deg); z-index: 1; opacity: 0.4; }
+.hero-card.hidden { transform: translateZ(-500px) scale(0); opacity: 0; z-index: -1; pointer-events: none; }
+
+.scroll-guide { 
+    margin-top: 60px; color: rgba(255, 255, 255, 0.5); 
+    font-family: 'Orbitron', sans-serif; font-size: 0.8rem; letter-spacing: 2px; 
+    animation: float 2s infinite; 
+}
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
+
+
+/* [3] 프로필 섹션 */
+#section-profile {
+width: 100%; height: 80vh; position: relative;
+    
+    /* ★ 수정: 기존 완전 블랙(#000)에서 상단이 미세하게 밝은 그라데이션으로 변경 */
+    background: linear-gradient(to bottom, #0f0f0f 0%, #000000 15%);
+    
+    /* ★ 추가: 첫 번째 영역과 구분되는 얇고 고급스러운 경계선 */
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+}
+.cinematic-bg {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background-size: cover; background-position: center top;
+    transition: background-image 0.5s ease-in-out; opacity: 0.5; z-index: 1; filter: saturate(0.8);
+}
+.cinematic-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(90deg, #000 10%, rgba(0,0,0,0.9) 40%, rgba(0,0,0,0.4) 100%); z-index: 2;
+}
+.cinematic-container {
+   width: 100%; /* 기존 90% -> 100% */
+    max-width: 100%; /* 기존 1600px 제한 해제 */
+    height: 100%; /* 기존 80% -> 위아래 꽉 채우기 */
+    position: relative; 
+    z-index: 10; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+}
+
+.profile-left { width: 50%; /* 절반 차지 */
+    color: white; 
+    padding-left: 10%; /* 화면 끝에 글씨가 붙지 않도록 왼쪽 여백 확보 */
+    position: relative;
+    z-index: 20; }
+.profile-year { font-size: 1.3rem; font-weight: 800; color: var(--chernobyl-gold); letter-spacing: 5px; margin-bottom: 30px; display: block; opacity: 0; font-family: 'Orbitron', sans-serif; animation: fadeInUp 1s forwards 0.5s; }
+.profile-title { font-size: 7rem; font-weight: 900; line-height: 0.9; font-family: 'Pretendard', sans-serif; text-transform: uppercase; letter-spacing: 5px; margin-bottom: 40px; color: #fff; opacity: 0; animation: fadeInUp 1s forwards 0.7s; }
+.profile-desc { font-size: 1.2rem; line-height: 1.8; color: rgba(255,255,255,0.7); max-width: 80%; margin-bottom: 60px; word-break: keep-all; opacity: 0; animation: fadeInUp 1s forwards 0.9s; }
+.circle-btn { width: 90px; height: 90px; border-radius: 50%; background: transparent; border: 3px solid var(--chernobyl-gold); color: var(--chernobyl-gold); font-size: 1.5rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; opacity: 0; animation: fadeInUp 1s forwards 1.1s; }
+.circle-btn:hover { background: var(--chernobyl-gold); color: black; transform: scale(1.1); }
+
+.profile-right { /* 영상 영역을 절반 차지하게 넓힘 */
+width: 50%; /* 화면 오른쪽 절반 완벽히 차지 */
+    height: 100%; /* 상하 꽉 채우기 */
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding: 0;
+    z-index: 10; }
+    
+.profile-video-box {
+ width: 100%;
+    height: 100%;
+    position: relative;
+    opacity: 0;
+    animation: fadeInRight 1.5s forwards 1.0s;
+    z-index: 1;
+}
+
+.profile-video-box::before {
+ content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 40%; 
+    height: 100%; 
+    background: var(--neon-green); 
+    filter: blur(120px); /* 블러를 조금 더 강하게 주어 퍼짐 효과 극대화 */
+    opacity: 0.8; /* 빛의 강도를 약간 높임 */
+    z-index: -1; 
+    transform: translateZ(0); 
+    
+    /* ★ 핵심 추가: 빛의 위아래 끝부분을 부드럽게 지워주는 마스크 ★ */
+    /* 위에서 10% 지점까지 투명 -> 불투명, 아래에서 10% 지점부터 불투명 -> 투명 */
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
+}
+
+/* ★ 핵심: 영상 왼쪽을 자연스럽게 투명(블러)하게 만드는 마스크 효과 ★ */
+.profile-video {
+ width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(80%) contrast(1.1);
+    position: relative;
+    z-index: 1;
+}
+
+.profile-video-box::after {
+ content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* 0%에서 완전한 검은색으로 시작하여 경계선을 완벽하게 감춤 */
+    background: linear-gradient(to right, black 0%, rgba(0,0,0,0.9) 20%, transparent 80%);
+    z-index: 2; 
+    pointer-events: none;
+}
+.list-header { display: flex; justify-content: space-between; color: var(--chernobyl-gold); font-weight: 800; letter-spacing: 2px; margin-bottom: 30px; border-bottom: 2px solid rgba(255,255,255,0.1); padding-bottom: 20px; }
+.chapter-item { display: flex; align-items: center; gap: 20px; padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: 0.3s; }
+.chapter-item:hover { background: rgba(255,255,255,0.05); padding-left: 15px; }
+.chap-num { font-size: 1.8rem; font-weight: 900; color: rgba(255,255,255,0.3); width: 40px; font-family: 'Orbitron', sans-serif; }
+.chapter-item:hover .chap-num { color: var(--chernobyl-gold); }
+.chap-info h4 { color: white; font-size: 1.1rem; font-weight: 700; margin-bottom: 5px; text-transform: uppercase; }
+.chap-info span { color: rgba(255,255,255,0.5); font-size: 0.9rem; }
+.chap-img { width: 100px; height: 60px; border-radius: 4px; object-fit: cover; opacity: 0.6; filter: grayscale(100%); transition: 0.3s; }
+.chapter-item:hover .chap-img { opacity: 1; filter: grayscale(0%); }
+
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeInRight { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+
+
+/* ======================================================== */
+/* [4] 타임라인 섹션 (이미지 제거 & 네온 타이포그래피 효과) */
+/* ======================================================== */
+#section-timeline { 
+    width: 100%; background-color: #050505; 
+    padding: 150px 0 200px 0; 
+    display: flex; flex-direction: column; align-items: center; 
+    color: white; border-top: 1px solid rgba(255,255,255,0.05); 
+    position: relative;
+}
+
+.timeline-header { text-align: center; margin-bottom: 120px; position: relative; z-index: 10; }
+.timeline-header h2 { font-size: 3.5rem; font-weight: 900; margin-bottom: 15px; color: var(--chernobyl-gold); text-transform: uppercase; letter-spacing: 5px; font-family: 'Pretendard', sans-serif;}
+.timeline-header p { color: rgba(255,255,255,0.6); font-size: 1.1rem; letter-spacing: 1px; }
+
+/* 중앙 수직 기준선 */
+.timeline-scroll-container { 
+    width: 100%; max-width: 1000px; position: relative; 
+    padding: 50px 0; 
+}
+.timeline-scroll-container::before {
+    content: ''; position: absolute; top: 0; left: 30%; /* 연도와 텍스트 사이 선 */
+    width: 2px; height: 100%; background: rgba(255, 255, 255, 0.1);
+}
+
+/* 개별 타임라인 항목 (기본: 어둡게) */
+.timeline-item {
+    display: flex; width: 100%; margin-bottom: 150px;
+    position: relative; opacity: 0.2; 
+    transform: translateY(50px); transition: all 0.8s ease-out;
+}
+
+/* ★ 스크롤 감지 시 활성화되는 효과 ★ */
+.timeline-item.in-view {
+    opacity: 1; transform: translateY(0);
+}
+
+/* 왼쪽: 거대한 연도 */
+.timeline-year-box {
+    width: 30%; padding-right: 60px; text-align: right;
+    position: relative; top: -15px;
+}
+.timeline-year-text {
+    font-family: 'Orbitron', sans-serif; font-size: 5.5rem; font-weight: 900;
+    color: #222; transition: 0.5s; line-height: 1; letter-spacing: -2px;
+}
+
+/* 오른쪽: 제목과 설명 */
+.timeline-content-box {
+    width: 70%; padding-left: 60px; position: relative;
+}
+.timeline-content-box h3 {
+    font-size: 2.2rem; color: #555; margin-bottom: 20px; font-weight: 800; transition: 0.5s; line-height: 1.3;
+}
+.timeline-content-box p {
+    font-size: 1.15rem; line-height: 1.8; color: rgba(255,255,255,0.3); word-break: keep-all; transition: 0.5s; font-weight: 300;
+}
+
+/* 중앙 빛나는 점 (노드) */
+.timeline-node {
+    position: absolute; top: 15px; left: 30%; transform: translateX(-50%);
+    width: 20px; height: 20px; background: #222; border-radius: 50%;
+    border: 4px solid #050505; transition: 0.5s; z-index: 5;
+}
+
+/* ===== [in-view] 상태일 때 적용되는 네온 리액션 ===== */
+.timeline-item.in-view .timeline-year-text {
+    color: var(--neon-green);
+    text-shadow: 0 0 20px rgba(0, 255, 157, 0.5), 0 0 40px rgba(0, 255, 157, 0.3);
+}
+.timeline-item.in-view .timeline-content-box h3 {
+    color: white; /* 텍스트 강조 */
+}
+.timeline-item.in-view .timeline-content-box p {
+    color: rgba(255,255,255,0.9);
+}
+.timeline-item.in-view .timeline-node {
+    background: var(--neon-green);
+    box-shadow: 0 0 20px var(--neon-green), 0 0 40px var(--neon-green);
+    border-color: var(--neon-green);
+}

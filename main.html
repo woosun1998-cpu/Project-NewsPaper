@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>근현대 신문사 - 호외요, 호외!</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="/NewsPaper/firstpage/main.css">
+
+  
+</head>
+<body>
+
+    <header id="fixed-header">
+        <div class="header-logo"><a href="/NewsPaper/firstpage/main.html"><img src="/NewsPaper/image/로고2.png" alt="로고"></a></div>
+        <nav class="header-menu">
+            <a href="/NewsPaper/todaynews/TodayNews.html">오늘의 뉴스</a>
+            <a href="/NewsPaper/search/search.html">옛기사 검색</a>
+            <a href="/NewsPaper/historyman/Historyman.html">그때 그 인물</a>
+            <a href="/NewsPaper/statistics/statistics.html">통계</a>
+            <a href="/NewsPaper/login/loginhtml.html" class="login-btn" id="loginLink">로그인</a>
+        </nav>
+    </header>
+
+    <main>
+        <section id="hero-section">
+            <div class="hero-content">
+                <div class="hero-text-box">
+                    <h1 class="hero-title">DISCOVER<br>HISTORY</h1>
+                    <p class="hero-subtitle">그날의 기사를 확인 해보세요</p>
+                    <a href="/NewsPaper/todaynews/TodayNews.html" class="hero-btn">기록 탐험하기 ➞</a>
+                </div>
+            </div>
+            <div class="hero-video-box">
+                <video autoplay muted playsinline class="kimgu-video" id="random-video-player">
+                    <source src="" type="video/mp4">
+                </video>
+            </div>
+        </section>
+
+        <section id="highlights-section">
+            <div class="section-header-box"><h1 class="section-header">호외요! 호외!</h1></div>
+
+            <div class="timeline">
+                <div class="timeline-line">
+                    <div class="timeline-point" data-year-match="1909" style="left: 20%;"></div>
+                    <span class="timeline-year" data-year-match="1909" style="left: 20%;">1909</span>
+                    
+                    <div class="timeline-point" data-year-match="1926" style="left: 50%;"></div>
+                    <span class="timeline-year" data-year-match="1926" style="left: 50%;">1926</span>
+                    
+                    <div class="timeline-point" data-year-match="1932" style="left: 80%;"></div>
+                    <span class="timeline-year" data-year-match="1932" style="left: 80%;">1932</span>
+                </div>
+            </div>
+
+            <div class="slider-3d-container">
+                <div class="nav-btn prev-btn" onclick="moveSlide(-1)">❮</div>
+                <div class="nav-btn next-btn" onclick="moveSlide(1)">❯</div>
+
+                <div class="slider-3d-wrapper" id="sliderWrapper">
+                    <div class="slide-card-3d left" data-year="1909">
+                        <div class="slide-content">
+                            <img src="/NewsPaper/image/대한매일신보19091109_3(원본).jpg" class="slide-paper-img" alt="안중근 기사">
+                            <div class="slide-info">
+                                <span class="slide-year">1909<small style="font-size:1rem">.11.09</small></span>
+                                <h3 class="slide-title">하얼빈의 총성, 여순의 포효</h3>
+                                <p class="slide-desc">안중근 의사의 초연한 태도와 이토 히로부미의 15가지 죄목을 꾸짖는 당당한 항거 기록입니다.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="slide-card-3d center" data-year="1926">
+                        <div class="slide-content">
+                            <img src="/NewsPaper/image/장례.png" class="slide-paper-img" alt="6.10만세 기사">
+                            <div class="slide-info">
+                                <span class="slide-year">1926<small style="font-size:1rem">.06.10</small></span>
+                                <h3 class="slide-title">6.10 만세운동</h3>
+                                <p class="slide-desc">순종 황제의 장례식 경로 보도는 독립운동가들에게 거사를 알리는 완벽한 암호이자 작전 지도였습니다.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="slide-card-3d right" data-year="1932">
+                        <div class="slide-content">
+                            <img src="/NewsPaper/image/이봉창 폭탄 투척.png" class="slide-paper-img" alt="이봉창 기사">
+                            <div class="slide-info">
+                                <span class="slide-year">1932<small style="font-size:1rem">.01.08</small></span>
+                                <h3 class="slide-title">이봉창, 일왕에게 폭탄을 던지다</h3>
+                                <p class="slide-desc">도쿄 한복판을 뒤흔든 폭발음, 비록 실패했으나 독립운동에 거대한 불씨를 당긴 위대한 도화선이 되었습니다.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="slide-card-3d right" data-year="1932">
+                        <div class="slide-content">
+                            <img src="/NewsPaper/image/윤봉길의사 폭탄 투척.png" class="slide-paper-img" alt="윤봉길 기사">
+                            <div class="slide-info">
+                                <span class="slide-year">1932<small style="font-size:1rem">.04.29</small></span>
+                                <h3 class="slide-title">윤봉길, 제국주의를 심판하다</h3>
+                                <p class="slide-desc">상하이 훙커우 공원에서 물통 폭탄으로 적의 심장부를 처단하며 세계에 조선의 의지를 알린 승전보입니다.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="library-stats">
+            <div class="marquee-text">DONG-A ARCHIVE 1920-2026 • HISTORY RECORD •</div>
+            <div class="stats-container">
+                <div class="stats-header">
+                    <h3>ARCHIVE STATISTICS</h3>
+                    <p>ⓘ 데이터 기준일 : 2026.02.02</p>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <p class="stat-label">발행한 지령(紙齡)</p>
+                        <div class="stat-number-box"><span class="count-up" data-target="30831">0</span><span class="unit">호</span></div>
+                    </div>
+                    <div class="stat-card">
+                        <p class="stat-label">발행한 지면 수</p>
+                        <div class="stat-number-box"><span class="count-up" data-target="618488">0</span><span class="unit">면</span></div>
+                    </div>
+                    <div class="stat-card">
+                        <p class="stat-label">누적 기사 수</p>
+                        <div class="stat-number-box"><span class="count-up" data-target="4201882">0</span><span class="unit">건</span></div>
+                    </div>
+                    <div class="stat-card">
+                        <p class="stat-label">쌓아올린 높이</p>
+                        <div class="stat-number-box"><span class="count-up" data-target="29107">0</span><span class="unit">m</span></div>
+                    </div>
+                    <div class="stat-card">
+                        <p class="stat-label">이어붙인 길이</p>
+                        <div class="stat-number-box"><span class="count-up" data-target="250000000">0</span><span class="unit">km</span></div>
+                    </div>
+                    <div class="stat-card">
+                        <p class="stat-label">신문 총 무게</p>
+                        <div class="stat-number-box"><span class="count-up" data-target="4520000">0</span><span class="unit">t</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // [1] 로그인 확인 로직
+            const userName = sessionStorage.getItem("userName");
+            const loginLink = document.getElementById("loginLink");
+            if (userName && loginLink) {
+                loginLink.textContent = userName + " 님 환영합니다";
+                loginLink.href = "/NewsPaper/mypage/mypage.html";
+                loginLink.style.color = "#00ff9d"; loginLink.style.border = "none";
+            }
+
+            // [2] 비디오 순차 재생 
+            const videoList = ['/NewsPaper/video/김구.mp4', '/NewsPaper/video/안중근.mp4', '/NewsPaper/video/안창호.mp4', '/NewsPaper/video/유관순.mp4', '/NewsPaper/video/윤봉길.mp4'];
+            let videoIndex = 0;
+            const videoPlayer = document.getElementById('random-video-player');
+            if (videoPlayer) {
+                videoPlayer.muted = true;
+                function playNextVideo() {
+                    videoPlayer.src = videoList[videoIndex];
+                    videoPlayer.play().then(() => videoPlayer.classList.remove('video-fade-out')).catch(e => console.log("재생 실패:", e));
+                    videoIndex = (videoIndex + 1) % videoList.length;
+                }
+                playNextVideo();
+                videoPlayer.onended = () => {
+                    videoPlayer.classList.add('video-fade-out');
+                    setTimeout(playNextVideo, 500); 
+                };
+            }
+
+            // [3] 3D 슬라이더 & 타임라인 연도 자동 동기화 
+           let currentSlide = 1; 
+            const slides = document.querySelectorAll('.slide-card-3d');
+            const points = document.querySelectorAll('.timeline-point');
+            const years = document.querySelectorAll('.timeline-year');
+
+            window.moveSlide = function(direction) {
+                currentSlide = (currentSlide + direction + slides.length) % slides.length;
+                updateSlider();
+            }
+
+            function updateSlider() {
+                const total = slides.length;
+                
+                // 1. 현재 중앙에 있는 슬라이드의 연도 가져오기 (예: "1932")
+                const activeYear = slides[currentSlide].getAttribute('data-year');
+
+                // 2. 타임라인 점 활성화 로직 (연도 기준으로 매칭)
+                points.forEach((point, i) => {
+                    const matchYear = point.getAttribute('data-year-match');
+                    if (matchYear === activeYear) {
+                        point.classList.add('active');
+                        if(years[i]) years[i].classList.add('active');
+                    } else {
+                        point.classList.remove('active');
+                        if(years[i]) years[i].classList.remove('active');
+                    }
+                });
+
+                // 3. 슬라이드 위치 재배치 (좌, 중, 우 1개씩만 지정, 나머지 숨김)
+                slides.forEach((slide, index) => {
+                    // ★ 일단 모든 카드를 'hidden'으로 확실하게 숨김
+                    slide.className = 'slide-card-3d hidden';
+
+                    if (index === currentSlide) {
+                        slide.classList.replace('hidden', 'center');
+                    } else if (index === (currentSlide - 1 + total) % total) {
+                        slide.classList.replace('hidden', 'left');
+                    } else if (index === (currentSlide + 1) % total) {
+                        slide.classList.replace('hidden', 'right');
+                    }
+                });
+            }
+            
+            updateSlider(); // 초기 실행
+            // [4] 통계 카운트업 (숫자 포맷팅 적용)
+            const counters = document.querySelectorAll('.count-up');
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                let count = 0;
+                const increment = target / 60; // 속도 조절 (작을수록 느림)
+                
+                const updateCount = () => {
+                    count += increment;
+                    if (count < target) {
+                        counter.innerText = Math.ceil(count).toLocaleString();
+                        requestAnimationFrame(updateCount);
+                    } else {
+                        counter.innerText = target.toLocaleString();
+                    }
+                };
+                updateCount();
+            });
+        });
+    </script>
+</body>
+</html>
