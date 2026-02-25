@@ -11,13 +11,13 @@
     
     <header id="fixed-header">
         <div class="header-logo">
-            <a href="/NewsPaper/firstpage/index.html" class="logo-text">MY ARCHIVE</a>
+            <a href="../firstpage/index.html" class="logo-text">MY ARCHIVE</a>
         </div>
         <nav class="header-menu">
-            <a href="/NewsPaper/todaynews/TodayNews.html">오늘의 뉴스</a>
-            <a href="/NewsPaper/search/search.html">옛기사 검색</a>
-            <a href="/NewsPaper/historyman/historyman.html">그때 그 인물</a>
-            <a href="/NewsPaper/statistics/statistics.html">통계</a>
+            <a href="../todaynews/TodayNews.html">오늘의 뉴스</a>
+            <a href="../search/search.html">옛기사 검색</a>
+            <a href="../historyman/historyman.html">그때 그 인물</a>
+            <a href="../statistics/statistics.html">통계</a>
             <a href="#" class="login-btn active-user" id="headerUserName">로딩 중...</a>
         </nav>
     </header>
@@ -64,12 +64,12 @@
     async function renderMyPage() { // 함수 이름을 실행부와 통일했습니다.
         try {
             // 1. 서버 세션에서 아이디 확인
-            const response = await fetch('/NewsPaper/todaynews/GetSession.jsp');
+            const response = await fetch('../todaynews/GetSession.jsp');
             const userId = (await response.text()).trim();
 
             if (!userId || userId === "null" || userId === "") {
                 alert("로그인이 필요합니다.");
-                location.href = "/NewsPaper/login/loginhtml.html";
+                location.href = "../login/loginhtml.html";
                 return;
             }
 
@@ -124,4 +124,5 @@
     window.onload = renderMyPage;
  </script>
 </body>
+
 </html>
