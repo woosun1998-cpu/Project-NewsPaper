@@ -1,0 +1,79 @@
+:root {
+  --bg-dark: #0a0a0a;
+  --table-bg: #111;
+  --line: #333;       
+  --neon-green: #39FF14;
+  --text: #ffffff;
+  --muted: #888;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0; background-color: var(--bg-dark); color: var(--text);
+  font-family: 'Pretendard', sans-serif;
+}
+.wrap { width: min(1000px, 95vw); margin: 0 auto; }
+
+/* 상단바 */
+.topbar { border-bottom: 1px solid var(--line); padding: 15px 0; margin-bottom: 40px; }
+.topbar__inner { display: flex; justify-content: space-between; align-items: center; }
+.brand { font-family: 'Orbitron'; font-weight: 900; color: var(--neon-green); font-size: 1.2rem; }
+
+/* 폼 컨테이너 */
+.edit-container { max-width: 800px; margin: 0 auto 100px; }
+.page-title { font-family: 'Orbitron'; color: var(--neon-green); margin-bottom: 10px; }
+.page-desc { color: var(--muted); margin-bottom: 30px; font-size: 0.95rem; }
+
+/* 테이블 스타일 */
+.edit-table { border-top: 2px solid var(--neon-green); border-bottom: 1px solid var(--line); }
+.table-row { display: flex; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+
+.th {
+  width: 180px; background-color: #1a1a1a; padding: 20px;
+  display: flex; align-items: center; font-weight: 700; color: var(--neon-green);
+  border-right: 1px solid var(--line); flex-shrink: 0;
+}
+.td { flex: 1; padding: 15px 20px; display: flex; flex-direction: column; justify-content: center; gap: 8px; }
+.td.flex-td { flex-direction: row; align-items: center; justify-content: flex-start; }
+.td-full { width: 100%; padding: 0 20px 15px 200px; color: var(--muted); font-size: 0.85rem; }
+
+/* 인풋 */
+input[type="text"], input[type="password"], input[type="tel"] {
+  background: #000; border: 1px solid #444; color: white;
+  padding: 10px; border-radius: 4px; font-size: 0.95rem; width: 100%; max-width: 300px;
+  outline: none; transition: 0.3s;
+}
+input:focus { border-color: var(--neon-green); }
+.input-readonly { background: transparent !important; border: none !important; color: #aaa !important; font-weight: bold; padding-left: 0 !important; }
+
+/* 이미지 업로드 스타일 */
+.profile-upload-box { display: flex; align-items: center; gap: 20px; }
+.avatar-img {
+    width: 80px; height: 80px; border-radius: 50%; object-fit: cover;
+    border: 2px solid var(--neon-green); background-color: #000;
+    box-shadow: 0 0 10px rgba(57, 255, 20, 0.2);
+}
+.input-file { color: #aaa; font-size: 0.9rem; }
+.input-file::file-selector-button {
+    background: #222; border: 1px solid #444; color: var(--neon-green);
+    padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-right: 10px;
+}
+.input-file::file-selector-button:hover { background: var(--neon-green); color: black; }
+
+/* 버튼 */
+.btn { padding: 10px 20px; border: 1px solid var(--neon-green); background: transparent; color: var(--neon-green); cursor: pointer; font-weight: bold; border-radius: 4px; transition: 0.3s; }
+.btn:hover { background: var(--neon-green); color: black; }
+.btn--small { padding: 6px 12px; font-size: 0.8rem; margin-left: 10px; }
+.btn--primary { background: var(--neon-green); color: black; padding: 15px 40px; font-size: 1.1rem; }
+.btn--ghost { border-color: #555; color: #888; }
+.btn--ghost:hover { border-color: white; color: white; background: transparent; }
+
+.form-actions { display: flex; justify-content: center; gap: 15px; margin-top: 40px; }
+.help-text { margin: 0; color: #666; font-size: 0.8rem; }
+.help { margin: 0; font-size: 0.8rem; color: #ff4444; }
+
+@media (max-width: 600px) {
+  .th { width: 100%; border-right: none; border-bottom: 1px solid #222; }
+  .td-full { padding-left: 20px; }
+  .profile-upload-box { flex-direction: column; align-items: flex-start; }
+}

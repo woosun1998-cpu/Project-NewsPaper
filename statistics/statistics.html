@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>근현대 신문사 - 통계 분석실</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+    <link rel="stylesheet" href="/NewsPaper/statistics/statistics.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <header id="fixed-header">
+        <div class="header-logo">
+            <a href="/NewsPaper/firstpage/index.html"><img src="/NewsPaper/image/로고2.png" alt="로고"></a>
+        </div>
+        <nav class="header-menu">
+            <a href="/NewsPaper/todaynews/TodayNews.html">오늘의 뉴스</a>
+            <a href="/NewsPaper/search/search.html">옛기사 검색</a>
+            <a href="/NewsPaper/historyman/Historyman.html">그때 그 인물</a>
+            <a href="/NewsPaper/statistics/statistics.html" class="active-menu">통계</a>
+            <a href="/NewsPaper/login/loginhtml.html" class="login-btn">로그인</a>
+        </nav>
+    </header>
+
+    <div class="dashboard-container">
+        <h1 class="dashboard-title">ARCHIVE ANALYTICS</h1>
+        <div class="chart-grid">
+            <div class="chart-card">
+                <h3>📰 신문사별 기사 보유량 (TOP 15)</h3>
+                <div class="chart-wrapper"><canvas id="pressCanvas"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <h3>⚖️ 기사 주제별 분포</h3>
+                <div class="chart-wrapper"><canvas id="topicCanvas"></canvas></div>
+            </div>
+            <div class="chart-card full-width">
+                <h3>📈 시대별 발행량 추이 (1883 - 1966)</h3>
+                <div class="chart-wrapper"><canvas id="yearCanvas"></canvas></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        fetch('news_data.json')
+            .then(res => res.json())
+            .then(data => {
+                // 1. 신문사 차트
+                const pressSorted = data.pressCompanies.sort((a, b) => Number(b.건수) - Number(a.건수)).slice(0, 15);
+                new Chart(document.getElementById('pressCanvas'), {
+                    type: 'bar',
+                    data: {
+                        labels: pressSorted.map(d => d.신문사),
+                        datasets: [{ label: '누적 기사 수', data: pressSorted.map(d => Number(d.건수)), backgroundColor: 'rgba(57, 255, 20, 0.7)', borderRadius: 5 }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+
+                // 2. 주제 차트 (오류 방지를 위해 키값 재점검)
+                const topicData = data.articleTopics[0] || data.articleTopics; // 배열 구조 대응
+                new Chart(document.getElementById('topicCanvas'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: topicData.map(d => d["기사 주제"] || d.label),
+                        datasets: [{ 
+                            data: topicData.map(d => Number(d.건수 || d.value)), 
+                            backgroundColor: ['#39ff14', '#38d816', '#28910f', '#ffffff', '#a0a0a0', '#444444'],
+                            borderWidth: 0 
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
+                });
+
+                // 3. 연도 차트
+                const yearData = data.publishYears[0] || data.publishYears;
+                new Chart(document.getElementById('yearCanvas'), {
+                    type: 'line',
+                    data: {
+                        labels: yearData.map(d => d.발행년도 || d.label),
+                        datasets: [{ label: '발행 건수', data: yearData.map(d => Number(d.건수 || d.value)), borderColor: '#39ff14', fill: true, backgroundColor: 'rgba(57, 255, 20, 0.1)', tension: 0.4 }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            });
+    </script>
+</body>
+</html>

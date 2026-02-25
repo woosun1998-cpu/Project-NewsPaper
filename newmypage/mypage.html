@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 타임라인 - 근현대 신문사</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/NewsPaper/firstpage/main.css"> <link rel="stylesheet" href="mypage.css"> </head>
+<body>
+    <header id="fixed-header">
+        <div class="header-logo">
+            <a href="/NewsPaper/firstpage/index.html"><img src="/NewsPaper/image/로고2.png" alt="로고"></a>
+        </div>
+        <nav class="header-menu">
+            <a href="/NewsPaper/todaynews/TodayNews.html">오늘의 뉴스</a>
+            <a href="/NewsPaper/search/search.html">옛기사 검색</a>
+            <a href="/NewsPaper/historyman/Historyman.html">그때 그 인물</a>
+            <a href="#" class="login-btn active-user" id="userNameDisplay">사용자 님</a>
+        </nav>
+    </header>
+
+    <main class="mypage-container">
+        <section id="user-profile">
+            <div class="profile-frame">
+                <div class="profile-img">
+                    <img src="/NewsPaper/image/default-avatar.png" alt="프로필">
+                </div>
+                <div class="profile-info">
+                    <span class="user-rank">ELITE ARCHIVIST</span>
+                    <h2 id="welcomeName">사용자 님</h2>
+                    <p class="user-status">"과거를 통해 미래를 설계하는 중"</p>
+                </div>
+                <div class="profile-actions">
+                    <button class="edit-btn">정보 수정</button>
+                    <button class="logout-btn" onclick="handleLogout()">로그아웃</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="user-stats">
+            <div class="stat-mini-card">
+                <span class="label">수집한 기사</span>
+                <span class="value">128<span>건</span></span>
+            </div>
+            <div class="stat-mini-card">
+                <span class="label">방문한 시대</span>
+                <span class="value">42<span>개</span></span>
+            </div>
+            <div class="stat-mini-card">
+                <span class="label">탐색 지면 수</span>
+                <span class="value">1,024<span>면</span></span>
+            </div>
+        </section>
+
+        <section id="scrapped-records">
+            <div class="section-title-box">
+                <h3 class="section-title">MY ARCHIVE</h3>
+                <p>내가 보관한 역사의 순간들</p>
+            </div>
+            
+            <div class="records-grid">
+                <div class="slide-card">
+                    <div class="slide-img"><img src="/NewsPaper/image/손기정_1936년8월25일기사.png" alt="특종"></div>
+                    <div class="slide-txt">
+                        <span class="slide-date">1936.08.11</span>
+                        <h3>손기정 인터뷰</h3>
+                        <button class="unsave-btn">기록 삭제</button>
+                    </div>
+                </div>
+                </div>
+        </section>
+    </main>
+
+    <script src="mypage.js"></script>
+</body>
+</html>

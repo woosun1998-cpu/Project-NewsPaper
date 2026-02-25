@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>마이페이지 - 근현대 신문사</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="mypage.css">
+</head>
+<body>
+    
+    <header id="fixed-header">
+        <div class="header-logo">
+            <a href="/NewsPaper/firstpage/index.html" class="logo-text">MY ARCHIVE</a>
+        </div>
+        <nav class="header-menu">
+            <a href="/NewsPaper/todaynews/TodayNews.html">오늘의 뉴스</a>
+            <a href="/NewsPaper/search/search.html">옛기사 검색</a>
+            <a href="/NewsPaper/historyman/historyman.html">그때 그 인물</a>
+            <a href="/NewsPaper/statistics/statistics.html">통계</a>
+            <a href="#" class="login-btn active-user" id="headerUserName">로딩 중...</a>
+        </nav>
+    </header>
+
+    <main class="mypage-container">
+        
+        <section id="user-profile">
+            <div class="profile-frame">
+                <div class="profile-img">
+                    <img id="viewProfileImg" src="https://via.placeholder.com/150/000000/00ff9d?text=PROFILE" alt="프로필">
+                </div>
+                
+                <div class="profile-info">
+                    <span class="user-rank">ELITE ARCHIVIST</span>
+                    
+                    <h2 id="welcomeName">로딩 중...</h2>
+                    
+                    <p class="user-status" id="viewBio">"소개가 없습니다."</p>
+                </div>
+
+                <div class="profile-actions">
+                    <a href="updatemypage.html" class="edit-btn">정보 수정</a>
+                    <a href="javascript:void(0);" class="logout-btn" onclick="handleLogout()">로그아웃</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="scrapped-records">
+            <div class="section-title-box">
+                <h3 class="section-title">MY ARCHIVE</h3>
+                <p>내가 보관한 역사의 순간들</p>
+            </div>
+            <div class="records-grid">
+                <div class="slide-card empty-card">
+                    <div class="slide-txt"><h3>저장된 기사가 없습니다.</h3></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+ <script>
+    const KEY_PREFIX = "profile_"; // updatemypage.js와 동일하게 설정
+
+    async function renderMyPage() { // 함수 이름을 실행부와 통일했습니다.
+        try {
+            // 1. 서버 세션에서 아이디 확인
+            const response = await fetch('/NewsPaper/todaynews/GetSession.jsp');
+            const userId = (await response.text()).trim();
+
+            if (!userId || userId === "null" || userId === "") {
+                alert("로그인이 필요합니다.");
+                location.href = "/NewsPaper/login/loginhtml.html";
+                return;
+            }
+
+            // 헤더에 사용자 아이디 표시
+            if (document.getElementById("headerUserName")) {
+                document.getElementById("headerUserName").innerText = userId + " 님";
+            }
+
+            // 2. 해당 아이디 전용 로컬 저장소 키 생성
+            const storageKey = KEY_PREFIX + userId;
+            const rawData = localStorage.getItem(storageKey);
+
+            if (rawData) {
+                const p = JSON.parse(rawData);
+                
+                // 3. ★ [중요] HTML의 실제 ID에 맞춰서 데이터 주입 ★
+                
+                // 닉네임 표시 (welcomeName 부분)
+                if (document.getElementById("welcomeName")) {
+                    document.getElementById("welcomeName").innerText = p.nickname + " 님";
+                }
+                
+                // 프로필 이미지 표시 (viewProfileImg 부분)
+                if (document.getElementById("viewProfileImg") && p.avatar) {
+                    document.getElementById("viewProfileImg").src = p.avatar;
+                }
+                
+                // 상태 메시지 (viewBio 부분 - 만약 프로필 데이터에 bio가 있다면)
+                if (document.getElementById("viewBio") && p.phone) {
+                    document.getElementById("viewBio").innerText = "연락처: " + p.phone;
+                }
+            } else {
+                // 저장된 데이터가 없을 경우 기본값 표시
+                document.getElementById("welcomeName").innerText = usernickname + " 님, 환영합니다";
+            }
+        } catch (err) {
+            console.error("데이터를 가져오는 중 오류 발생:", err);
+        }
+    }
+
+    // 로그아웃 처리 함수
+    function handleLogout() {
+        if (confirm("정말 로그아웃 하시겠습니까?")) {
+            // 세션 로그아웃 처리를 위해 서버로 보내는 것이 가장 좋습니다.
+            // 일단 메인으로 이동
+            alert("로그아웃 되었습니다.");
+            location.href = "/NewsPaper/firstpage/main.html";
+        }
+    }
+
+    // 페이지 로드 시 실행 (이름을 renderMyPage로 맞췄습니다)
+    window.onload = renderMyPage;
+ </script>
+</body>
+</html>

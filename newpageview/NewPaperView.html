@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>기사 상세 보기</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+    
+    <style>
+        /* [기본 설정] */
+        body { 
+            margin: 0; background-color: #000; display: flex; flex-direction: column; 
+            align-items: center; min-height: 100vh; color: white; font-family: 'Pretendard';
+            overflow-x: hidden; 
+        }
+        
+        /* [UI 요소 스타일] */
+        .header-nav { position: fixed; top: 20px; left: 20px; z-index: 1000; }
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2); color: white; border: 1px solid rgba(255,255,255,0.4);
+            padding: 10px 20px; border-radius: 30px; cursor: pointer; font-size: 16px;
+            backdrop-filter: blur(5px); display: flex; align-items: center; gap: 8px;
+        }
+        .back-btn:hover { background: rgba(255, 255, 255, 0.4); }
+
+        .zoom-controls {
+            position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 10px;
+            z-index: 1000; background: rgba(0,0,0,0.6); padding: 10px; border-radius: 15px; backdrop-filter: blur(5px);
+        }
+        .zoom-btn { width: 40px; height: 40px; border-radius: 50%; border: none; background: #333; color: white; font-size: 20px; cursor: pointer; }
+        .zoom-btn:hover { background: #39FF14; color: black; }
+        .zoom-display { text-align: center; font-size: 12px; color: #ccc; margin-top: 5px; }
+
+        .bottom-bar {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 15px; z-index: 1000; background: rgba(0,0,0,0.8);
+            padding: 15px 25px; border-radius: 50px; border: 1px solid #333;
+        }
+        .action-btn { padding: 10px 20px; font-size: 16px; border-radius: 30px; border: none; cursor: pointer; font-weight: bold; white-space: nowrap; }
+        .btn-trans { background: #fff; color: #000; }
+        .btn-magic { background: #39FF14; color: #000; }
+
+        /* [신문 액자] */
+        .magic-paper-wrapper { position: absolute;   /* fixed나 margin 대신 absolute 사용 */
+    	top: 50%; left: 50%;
+    	transform: translate(-50%, -50%) scale(1.0);
+    	cursor: grab; }
+    	
+        .magic-paper-container { position: relative; width: 800px; box-shadow: 0 0 50px rgba(0,0,0,0.7); display: inline-block; }
+        .base-paper-img { width: 100%; height: auto; display: block; }
+        
+        /* 슬라이드 버튼 */
+        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); border: none; color: white; font-size: 24px; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; z-index: 30; display: none; transition: 0.2s; }
+        .nav-btn:hover { background: rgba(255,255,255,0.5); }
+        .prev-btn { left: -70px; } .next-btn { right: -70px; }
+
+        /* ★★★ [영상 공통 스타일] ★★★ */
+        .live-photo {
+   position: absolute; 
+    object-fit: cover; /* 혹은 fill, 상황에 따라 조절 */
+    opacity: 0; 
+    pointer-events: none; 
+    z-index: 99; 
+    transition: opacity 0.5s ease;
+
+
+        }
+
+        /* ★★★ [재생 버튼 눌렀을 때] ★★★ */
+        .live-photo.active { 
+            opacity: 1;           /* 재생 시: 보임 */
+   			 pointer-events: auto; /* 재생 시: 조작 가능 */
+            
+        }
+        /* 드래그 중일 때 커서 변경 */
+        .live-photo.active:active {
+            cursor: grabbing;
+        }
+
+        /* ============================================================
+           [위치 조절 구역]
+           ============================================================ */
+        .pos-610 { top: 20%; left: 5%; width: 40%; }
+        .pos-yun { top: 55%; left: 50%; width: 35%; }
+
+        /* [이봉창 의사] */
+        .pos-lee-1 { 
+            top: 21.8%; left: 6%; width: 6.22%; height: 6.7%; object-fit: fill; 
+            -webkit-mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%);
+            mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%);
+        }
+        .pos-lee-2 { 
+            top: 28.9%; left: 12.4%; width: 6.4%; height: 6.9%; object-fit: fill;
+            -webkit-mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%);
+            mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%);
+        }
+        .pos-lee-3 { 
+            top: 14.2%; left: 12.7%; width: 6.4%; height: 7.02%; object-fit: fill;
+            -webkit-mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%);
+            mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%);
+        }
+        .pos-lee-4 { 
+            top: 14.2%; left: 5.88%; width: 6.2%; height: 7.02%; object-fit: fill;
+            -webkit-mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%);
+            mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%);
+        }
+        .pos-lee-5 { 
+            top: 80.6%; left: 46.2%; width: 6.2%; height: 7.02%; object-fit: fill; 
+            -webkit-mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%);
+            mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%);
+        }
+        .pos-lee-6 { 
+            top: 51.1%; left: 65.7%; width: 6.2%; height: 6.8%; object-fit: fill;
+            -webkit-mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%);
+            mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%);
+        }
+        .pos-lee-7 { 
+            top: 21.6%; left: 12.9%; width: 6.2%; height: 6.9%; object-fit: fill;
+            -webkit-mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%);
+            mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%);
+        }
+        
+        .pos-lee-8{
+        top: 6.7%; left: 7.4%; width: 25.1%; height: auto; object-fit: fill;
+            -webkit-mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%);
+            mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%);
+        }
+       
+       
+        .pos-610{
+        top: 82.7%; left: 38.3%; width: 25.7%; height: 16%; object-fit: fill;
+            -webkit-mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%);
+            mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%);
+        }
+       
+        .pos-611{
+        top: 31.5%; left: 59.8%; width: 39.4%; height: 28.9%; object-fit: fill;
+     	mask-image: url('/NewsPaper/image/경성일보마스크1.png');
+    		mask-size: 100% 100%;
+    		mask-repeat: no-repeat;
+    		mask-position: center;
+        }
+       
+        .pos-612{
+        top: 54.3%; left: 56.1%; width: 41.5%; height:21.5%; 
+            
+            /* ★ 1. 영상 비율을 유지하면서 빈틈없이 꽉 채우기 (fill 대신 cover 사용) */
+            object-fit: cover; 
+            
+            /* ★ 2. 얼굴 위치 맞추기 (이 숫자를 조절하여 위아래로 움직입니다!) */
+            /* 가로는 중앙(center), 세로는 위에서부터 10% 지점에 초점을 맞춘다는 뜻입니다. */
+            object-position: center 0%; 
+
+            /* ★ 3. 마스크 코드 깔끔하게 정리 (불필요한 그라데이션 중복 삭제) */
+            -webkit-mask-image: url('/NewsPaper/image/경성일보마스크2.png');
+            mask-image: url('/NewsPaper/image/경성일보마스크2.png');
+            mask-size: 100% 135%;
+            mask-repeat: no-repeat;
+            mask-position: center;
+        }
+        
+        .pos-yun1{
+        top: 8%; left: 5.5%; width: 24.2%; height:28.1%; object-fit: fill;
+            -webkit-mask-image: radial-gradient(ellipse at center, black 100%, transparent 100%);
+            mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%);
+            -webkit-mask-image: radial-gradient(circle at center, black 60%, transparent 100%);
+        }
+       
+        .pos-yun2{
+        top: 29.7%; left: 69.7%; width: 23.5%; height:21.2%; object-fit: fill;
+            -webkit-mask-image: radial-gradient(ellipse at center, black 100%, transparent 100%);
+            mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%);
+            -webkit-mask-image: radial-gradient(circle at center, black 60%, transparent 100%);
+        }
+        .pos-son1{
+        top: 4.5%; left: 38.2%; width: 27.9%; height:21.2%; object-fit: fill;
+            -webkit-mask-image: radial-gradient(ellipse at center, black 100%, transparent 100%);
+            	mask-image: url('/NewsPaper/image/손기정마스크1.png');
+    		mask-size: 100% 100%;
+    		mask-repeat: no-repeat;
+    		mask-position: center;
+        }
+        .pos-son2{
+        top: 24.2%; left: 41.8%; width: 25.5%; height:14.8%; object-fit: fill;
+           	mask-image: url('/NewsPaper/image/손기정마스크2.png');
+    		mask-size: 100% 145%;
+    		mask-repeat: no-repeat;
+    		mask-position: center;
+        }
+        
+        .pos-an1{
+        top: 30.1%; left: 34.8%; width: 18.5%; height:13.5%; object-fit: fill;
+            -webkit-mask-image: radial-gradient(ellipse at center, black 100%, transparent 100%);
+            mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%);
+            -webkit-mask-image: radial-gradient(circle at center, black 80%, transparent 100%);
+            -webkit-mask-image: url('/NewsPaper/image/my_shape.png');
+   			 mask-image: url('/NewsPaper/image/안창호선생마스크.png');
+    		mask-size: 100% 100%;
+    		mask-repeat: no-repeat;
+    		mask-position: center;
+        }
+        .pos-an2{
+        top: 40.2%; left: 14.9%; width: 14.5%; height:10.5%; object-fit: fill;
+            -webkit-mask-image: radial-gradient(ellipse at center, black 100%, transparent 100%);
+            mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%);
+            -webkit-mask-image: radial-gradient(circle at center, black 80%, transparent 100%);
+            -webkit-mask-image: url('/NewsPaper/image/my_shape.png');
+    		mask-image: url('/NewsPaper/image/식전단장마스크.png');
+    		mask-size: 100% 100%;
+    		mask-repeat: no-repeat;
+    		mask-position: center;
+        }
+        .pos-an3{
+        top: 30.9%; left: 9.2%; width: 15.5%; height:11.6%; object-fit: fill;
+            -webkit-mask-image: radial-gradient(ellipse at center, black 100%, transparent 100%);
+            mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%);
+            -webkit-mask-image: radial-gradient(circle at center, black 80%, transparent 100%);
+            -webkit-mask-image: url('/NewsPaper/image/my_shape.png');
+    		mask-image: url('/NewsPaper/image/야촌사령관 마스크.png');
+    		mask-size: 100% 100%;
+    		mask-repeat: no-repeat;
+    		mask-position: center;
+        }
+        .pos-an4{
+        top: 40%; left: 4%; width: 14.8%; height:11%; object-fit: fill;
+            -webkit-mask-image: radial-gradient(ellipse at center, black 100%, transparent 100%);
+            mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%);
+            -webkit-mask-image: radial-gradient(circle at center, black 80%, transparent 100%);
+            -webkit-mask-image: url('/NewsPaper/image/my_shape.png');
+    		mask-image: url('/NewsPaper/image/주상하이일본총영사마스크.png');
+    		mask-size: 100% 100%;
+   		 	mask-repeat: no-repeat;
+    		mask-position: center;
+        }
+        .pos-an5{
+        top: 22.4%; left: 14.7%; width: 17.4%; height:12.8%; object-fit: fill;
+            -webkit-mask-image: radial-gradient(ellipse at center, black 100%, transparent 100%);
+            mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%);
+            -webkit-mask-image: radial-gradient(circle at center, black 80%, transparent 100%);
+            -webkit-mask-image: url('/NewsPaper/image/my_shape.png');
+    		mask-image: url('/NewsPaper/image/중광공사마스크.png');
+    		mask-size: 100% 100%;
+    		mask-repeat: no-repeat;
+    		mask-position: center;
+        }
+        .pos-an6{
+        top: 22.8%; left: 2.2%; width: 16.8%; height:12%; object-fit: fill;
+            -webkit-mask-image: radial-gradient(ellipse at center, black 100%, transparent 100%);
+            mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%);
+            -webkit-mask-image: radial-gradient(circle at center, black 80%, transparent 100%);
+            -webkit-mask-image: url('/NewsPaper/image/my_shape.png');
+    		mask-image: url('/NewsPaper/image/백천대장마스크.png');
+    		mask-size: 100% 100%;
+    		mask-repeat: no-repeat;
+    		mask-position: center;
+        }
+        
+
+    </style>
+</head>
+<body>
+
+    <div class="header-nav">
+        <button class="back-btn" onclick="goBack()"><span>←</span> 목록으로</button>
+    </div>
+
+    <div class="magic-paper-wrapper" id="zoomTarget">
+        <div class="magic-paper-container" id="paperContainer">
+            <button class="nav-btn prev-btn" onclick="changePage(-1)">&#10094;</button>
+            <button class="nav-btn next-btn" onclick="changePage(1)">&#10095;</button>
+            <img id="mainImage" src="" class="base-paper-img" alt="신문을 불러오는 중...">
+        </div>
+    </div>
+
+    <div class="bottom-bar">
+        <button class="action-btn btn-trans" onclick="toggleTranslation()">📜 번역본 보기</button>
+        <button class="action-btn btn-magic" onclick="toggleMagic()">🪄 영상 재생</button>
+    </div>
+
+    <div class="zoom-controls">
+        <button class="zoom-btn" onclick="zoomIn()">+</button>
+        <div class="zoom-display" id="zoomLevel">100%</div>
+        <button class="zoom-btn" onclick="zoomOut()">-</button>
+        <button class="zoom-btn" onclick="resetZoom()" style="font-size:12px;">Reset</button>
+    </div>
+
+    <script>
+        const articleData = {
+            "610": [{
+                original: "/NewsPaper/image/news_old.jpg", translated: "/NewsPaper/image/news_new.jpg",
+                videos: [ { src: "/NewsPaper/video/경성일보 삽화 그림.mp4", pos: "pos-610" } ,
+                { src: "/NewsPaper/video/경성일보 신문1.mp4", pos: "pos-611", shapeId: "shape-deep" } ,
+                { src: "/NewsPaper/video/경성일보 신문2.mp4", pos: "pos-612" } 
+                ]
+            }],
+            
+            "손기정": [{
+                original: "/NewsPaper/image/news_son.png", translated: "/NewsPaper/image/1936.8.25(손기정번역본).png",
+                videos: [  
+                { src: "/NewsPaper/video/손기정우승.mp4", pos: "pos-son1" } ,
+                { src: "/NewsPaper/video/손기정마라톤장면.mp4", pos: "pos-son2" } 
+                ]
+            }],
+            "yun": [{
+                original: "/NewsPaper/image/윤봉길체포기사1932년05월04일기사.png", translated: "/NewsPaper/image/da_4084_e_19320504_2(윤봉길 번역본).png",
+                videos: [ { src: "/NewsPaper/video/낙화.mp4", pos: "pos-yun1" },
+                		{ src: "/NewsPaper/video/윤봉길체포.mp4", pos: "pos-yun2" } 
+            ]
+            }],
+            "안창호": [{
+                original: "/NewsPaper/image/안창호체포기사_1932년5월1일.png", translated: "/NewsPaper/image/da_4081_e_19320501_2(안창호 선생 번역).png",
+                videos: [ { src: "/NewsPaper/video/안창호선생.mp4", pos: "pos-an1" },
+                		{ src: "/NewsPaper/video/우에다겐키치.mp4", pos: "pos-an2" },
+                		{ src: "/NewsPaper/video/노무라기치사부로.mp4", pos: "pos-an3" }, 
+                		{ src: "/NewsPaper/video/무라이총영사.mp4", pos: "pos-an4" }, 
+                		{ src: "/NewsPaper/video/시게미쓰마모루.mp4", pos: "pos-an5" }, 
+                		{ src: "/NewsPaper/video/시라카와요시노리.mp4", pos: "pos-an6" } 
+            ]
+            }],
+            
+            "안중근": [{
+                original: "/NewsPaper/image/대한매일신보19091203_2(원본).jpg", translated: "/NewsPaper/image/대한매일신보19091203_2(안중근 번역).png",
+            }, {
+            	original: "/NewsPaper/image/대한매일신보19091109_3(원본).jpg", translated: "/NewsPaper/image/대한매일신보19091109(안중근)_3(번역).png"
+            }
+            ],
+            
+            "이봉창": [{ // 1페이지
+                original: "/NewsPaper/image/da_3969_e_19320110_1.png", translated: "/NewsPaper/image/동아일보 (이봉창)19320110_1(번역복).png",
+                videos: [
+                    { src: "../video/슈네 박사.mp4", pos: "pos-lee-1" },
+                    { src: "../video/5번 인물.mp4", pos: "pos-lee-2" },
+                    { src: "../video/리튼백작.mp4", pos: "pos-lee-3" },
+                    { src: "../video/메코이장군.mp4", pos: "pos-lee-4" },
+                    { src: "../video/앙리스타드.mp4", pos: "pos-lee-5" },
+                    { src: "../video/왕정위.mp4", pos: "pos-lee-6" },
+                    { src: "../video/클로델.mp4", pos: "pos-lee-7" }
+                ]
+            }, { // 2페이지
+                original: "/NewsPaper/image/da_3969_e_19320110_2.png", translated: "/NewsPaper/image/동아일보 (이봉창)19320110_2번역본.png",
+                videos: [
+                	{ src:"../video/눈와서아이들이놀고있는영상.mp4",pos:"pos-lee-8"}
+                ]
+            }]
+        };
+
+        let currentId = "610"; let currentPageIndex = 0;
+        let isTranslated = false; let currentArticlePages = [];
+        let currentZoom = 1.0;
+
+        const params = new URLSearchParams(window.location.search);
+        const urlId = params.get('id');
+        if (urlId && articleData[urlId]) currentId = urlId;
+        
+        currentArticlePages = articleData[currentId];
+        renderView();
+
+        function renderView() {
+            if (!currentArticlePages) return;
+            const pageData = currentArticlePages[currentPageIndex];
+            const imgEl = document.getElementById('mainImage');
+            const container = document.getElementById('paperContainer');
+
+            imgEl.src = isTranslated ? pageData.translated : pageData.original;
+
+            container.querySelectorAll('video').forEach(v => v.remove());
+            if (pageData.videos) {
+                pageData.videos.forEach(vData => {
+                    const vid = document.createElement('video');
+                    vid.className = `live-photo ${vData.pos}`;
+                    
+                    // ★ [추가] 데이터에 정의된 마스크값이 있다면 개별 적용
+                    // 데이터 예시: { src: "..", pos: "..", mask: "radial-gradient(..)" }
+                    if (vData.mask) {
+                        vid.style.webkitMaskImage = vData.mask;
+                        vid.style.maskImage = vData.mask;
+                    }
+                    
+                    vid.loop = true; vid.muted = true; vid.playsInline = true;
+                    const src = document.createElement('source');
+                    src.src = vData.src; src.type = 'video/mp4';
+                    vid.appendChild(src); container.appendChild(vid); vid.load();
+                });
+            }
+            // 버튼 처리
+            const prevBtn = document.querySelector('.prev-btn');
+            const nextBtn = document.querySelector('.next-btn');
+            if (currentArticlePages.length > 1) {
+                prevBtn.style.display = (currentPageIndex > 0) ? 'block' : 'none';
+                nextBtn.style.display = (currentPageIndex < currentArticlePages.length - 1) ? 'block' : 'none';
+            } else {
+                prevBtn.style.display = 'none'; nextBtn.style.display = 'none';
+            }
+        }
+
+        function changePage(dir) { currentPageIndex += dir; renderView(); }
+        function toggleTranslation() {
+            isTranslated = !isTranslated;
+            const btn = document.querySelector('.btn-trans');
+            btn.innerText = isTranslated ? "↩ 원본 신문 보기" : "📜 번역본 보기";
+            renderView();
+        }
+        function toggleMagic() {
+            const videos = document.querySelectorAll('video');
+            const btn = document.querySelector('.btn-magic');
+            if(videos.length === 0) return;
+            const isPaused = videos[0].paused;
+            
+            // ★ [핵심] 버튼 누르면 .active 클래스 토글 (보임/안보임 + 조작가능/불가)
+            videos.forEach(v => {
+                if (isPaused) { 
+                    v.play(); 
+                    v.classList.add('active'); // 보이게 함 + 조작 가능
+                } else { 
+                    v.pause(); 
+                    v.classList.remove('active'); // 숨김 + 조작 불가
+                }
+            });
+            btn.innerText = isPaused ? "영상 멈추기" : "영상 재생";
+        }
+        function zoomIn() { if(currentZoom < 3.0) { currentZoom += 0.2; applyZoom(); } }
+        function zoomOut() { if(currentZoom > 0.5) { currentZoom -= 0.2; applyZoom(); } }
+        function resetZoom() { currentZoom = 1.0; applyZoom(); }
+        function applyZoom() {
+            document.getElementById('zoomTarget').style.transform = `scale(${currentZoom})`;
+            document.getElementById('zoomLevel').innerText = Math.round(currentZoom * 100) + '%';
+        }
+        function goBack() {
+            // 1. 현재 주소창에 붙은 꼬리표(from)를 확인합니다.
+            const params = new URLSearchParams(window.location.search);
+            const fromWhere = params.get('from');
+
+            // 2. 꼬리표에 따라 행선지를 결정합니다.
+            if (fromWhere === 'search') {
+                // 검색 페이지에서 왔다면 -> 검색 페이지로!
+                // (새 창으로 열렸다면 닫고, 아니라면 이동)
+                if(window.opener) { window.close(); } 
+                else { location.href = '/NewsPaper/search/search.html'; }
+            } 
+            else if (fromWhere === 'today') {
+                // 오늘의 뉴스에서 왔다면 -> 오늘의 뉴스 페이지로!
+                if(window.opener) { window.close(); }
+                else { location.href = '/NewsPaper/todaynews/TodayNews.html'; }
+            } 
+            else {
+                // 꼬리표가 없으면 그냥 뒤로가기 (안전장치)
+                if(window.opener) { window.close(); }
+                else { window.history.back(); }
+            }
+        }
+    </script>
+    
+    <script>
+        // ★★★ 설명글(초록색 박스) 생성 코드 삭제됨 ★★★
+
+      const zoomTarget = document.getElementById('zoomTarget');
+let isPaperDragging = false;
+let pStartX, pStartY, pInitialLeft, pInitialTop;
+
+// 1. 마우스 휠로 기사 전체 줌 (영상 크기 조절 대신 기사 줌)
+window.onwheel = (e) => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -0.1 : 0.1;
+    currentZoom = Math.min(Math.max(0.5, currentZoom + delta), 3.0);
+    applyZoom();
+};
+
+// 2. 기사 드래그 이동 로직
+zoomTarget.onmousedown = (e) => {
+    // 영상이 재생 중일 때 영상을 직접 클릭한 게 아니라면 기사를 드래그
+    if (e.target.tagName === 'VIDEO') return; 
+    
+    isPaperDragging = true;
+    pStartX = e.clientX;
+    pStartY = e.clientY;
+    // getBoundingClientRect 대신 offset 사용 시 초기 위치값 보정
+    pInitialLeft = zoomTarget.offsetLeft;
+    pInitialTop = zoomTarget.offsetTop;
+    zoomTarget.style.cursor = 'grabbing';
+};
+
+document.addEventListener('mousemove', (e) => {
+    if (!isPaperDragging) return;
+    const dx = e.clientX - pStartX;
+    const dy = e.clientY - pStartY;
+    
+    // translate(-50%, -50%)를 고려한 좌표 이동
+    zoomTarget.style.left = (pInitialLeft + dx) + 'px';
+    zoomTarget.style.top = (pInitialTop + dy) + 'px';
+});
+
+document.addEventListener('mouseup', () => {
+    isPaperDragging = false;
+    zoomTarget.style.cursor = 'grab';
+});
+
+// 3. 줌 적용 함수 (중앙 정렬 유지)
+function applyZoom() {
+    zoomTarget.style.transform = `translate(-50%, -50%) scale(${currentZoom})`;
+    document.getElementById('zoomLevel').innerText = Math.round(currentZoom * 100) + '%';
+}
+
+// 4. 리셋 함수 보강 (위치까지 초기화)
+function resetZoom() {
+    currentZoom = 1.0;
+    zoomTarget.style.left = '50%';
+    zoomTarget.style.top = '50%';
+    applyZoom();
+}
+        // ★★★ 디버그 정보 업데이트 함수 삭제됨 ★★★
+    </script>
+    
+ 
+
+</body>
+</html>

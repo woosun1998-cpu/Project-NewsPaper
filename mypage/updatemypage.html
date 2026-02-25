@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>정보 수정 - 근현대 신문사</title>
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="updatemypage.css" />
+</head>
+<body>
+  
+  <header class="topbar">
+    <div class="wrap topbar__inner">
+      <div class="brand">MY ARCHIVE</div>
+      <a href="mypage.html" class="btn btn--ghost">돌아가기</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="edit-container">
+      <h1 class="page-title">EDIT PROFILE</h1>
+      <p class="page-desc">회원님의 소중한 정보를 안전하게 관리하세요.</p>
+
+      <form id="editForm" class="edit-form" autocomplete="off">
+        
+        <div class="edit-table">
+            
+            <div class="table-row">
+                <div class="th">아이디</div>
+                <div class="td">
+                    <input type="text" id="userId" class="input-readonly" readonly>
+                </div>
+            </div>
+
+            <div class="table-row">
+                <div class="th">비밀번호</div>
+                <div class="td">
+                    <input type="password" id="newPw" class="input-std" placeholder="변경할 경우에만 입력하세요">
+                    <p class="help-text">※ 영문/숫자/특수문자 포함 8자 이상 권장</p>
+                </div>
+            </div>
+
+            <div class="table-row">
+                <div class="th">비밀번호 확인</div>
+                <div class="td">
+                    <input type="password" id="newPw2" class="input-std" placeholder="비밀번호 재입력">
+                    <p class="help" id="helpPw"></p>
+                </div>
+            </div>
+
+            <div class="table-row">
+                <div class="th">이름</div>
+                <div class="td">
+                    <input type="text" id="userName" class="input-readonly" readonly>
+                </div>
+            </div>
+
+            <div class="table-row">
+                <div class="th">닉네임</div>
+                <div class="td">
+                    <input type="text" id="nickname" class="input-std" placeholder="사용할 닉네임">
+                </div>
+            </div>
+
+            <div class="table-row">
+                <div class="th">휴대폰 번호</div>
+                <div class="td flex-td">
+                    <input type="tel" id="phone" class="input-std" placeholder="010-0000-0000">
+                    <button type="button" class="btn btn--small">본인인증</button>
+                </div>
+                <div class="td-full">
+                    <p class="help-text">※ 휴대폰 번호 변경 시, 본인확인을 위해 인증이 필요할 수 있습니다.</p>
+                </div>
+            </div>
+
+            <div class="table-row">
+                <div class="th">프로필 사진</div>
+                <div class="td">
+                    <div class="profile-upload-box">
+                        <img id="avatarPreview" src="" alt="미리보기" class="avatar-img">
+                        
+                        <div class="file-input-wrapper">
+                            <input type="file" id="avatarFile" class="input-file" accept="image/*">
+                            <p class="help-text">※ 5MB 이하의 JPG, PNG 파일을 권장합니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn--primary">수정 완료</button>
+            <button type="button" id="btnCancel" class="btn btn--ghost">취소</button>
+        </div>
+
+      </form>
+    </section>
+  </main>
+
+  <script src="updatemypage.js"></script>
+</body>
+</html>

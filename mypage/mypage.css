@@ -1,0 +1,97 @@
+@charset "UTF-8";
+
+:root {
+    --neon-green: #39FF14;
+    --bg-dark: #0a0a0a;
+    --card-bg: #141414;
+    --line: #333;
+    --text: #ffffff;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text);
+    font-family: 'Pretendard', sans-serif;
+}
+
+a { text-decoration: none; color: inherit; }
+
+/* [1] 헤더 스타일 복구 */
+#fixed-header {
+    height: 80px; display: flex; justify-content: space-between; align-items: center;
+    padding: 0 50px; border-bottom: 1px solid var(--line);
+    background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(10px);
+    position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+}
+.logo-text { font-family: 'Orbitron'; font-weight: 900; color: var(--neon-green); font-size: 1.5rem; letter-spacing: 2px; }
+
+.header-menu { display: flex; gap: 30px; align-items: center; }
+.header-menu a { font-weight: bold; color: #aaa; transition: 0.3s; font-size: 0.95rem; }
+.header-menu a:hover { color: var(--neon-green); text-shadow: 0 0 10px rgba(57, 255, 20, 0.5); }
+.header-menu .active-user { color: var(--neon-green) !important; font-weight: 800; border: 1px solid var(--neon-green); padding: 5px 15px; border-radius: 20px; }
+
+
+/* [2] 메인 컨테이너 */
+.mypage-container {
+    max-width: 1000px; margin: 0 auto; padding: 120px 20px 50px; /* 헤더 높이만큼 padding-top */
+}
+
+/* [3] 프로필 섹션 */
+#user-profile {
+    background: var(--card-bg);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 40px;
+    margin-bottom: 50px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    border-top: 3px solid var(--neon-green);
+}
+
+.profile-frame { display: flex; align-items: center; gap: 40px; }
+
+.profile-img {
+    width: 140px; height: 140px; border-radius: 50%; overflow: hidden;
+    border: 3px solid var(--neon-green);
+    box-shadow: 0 0 20px rgba(57, 255, 20, 0.2); flex-shrink: 0;
+}
+.profile-img img { width: 100%; height: 100%; object-fit: cover; }
+
+.profile-info { flex: 1; }
+.user-rank { 
+    color: var(--neon-green); font-family: 'Orbitron'; font-size: 0.8rem; letter-spacing: 1px; 
+    border: 1px solid var(--neon-green); padding: 4px 10px; border-radius: 15px;
+}
+.profile-info h2 { font-size: 2.2rem; margin: 15px 0 10px; font-weight: 800; color: white; }
+.user-status { color: #888; font-style: italic; }
+
+.profile-actions { display: flex; gap: 10px; }
+.edit-btn { background: var(--neon-green); color: black; padding: 10px 20px; border-radius: 5px; font-weight: bold; }
+.edit-btn:hover { background: #39FF14; }
+.logout-btn { border: 1px solid #555; color: #888; padding: 10px 20px; border-radius: 5px; }
+.logout-btn:hover { border-color: white; color: white; }
+
+
+/* [4] 하단 아카이브 섹션 복구 */
+.section-title-box { 
+    border-left: 5px solid var(--neon-green); padding-left: 20px; margin-bottom: 30px; 
+}
+.section-title { font-family: 'Orbitron'; font-size: 1.8rem; color: white; }
+
+.records-grid { width: 100%; min-height: 200px; }
+
+.empty-card { 
+    width: 100%; height: 200px; 
+    border: 2px dashed #333; border-radius: 15px;
+    display: flex; justify-content: center; align-items: center;
+    color: #555; font-size: 1.1rem;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .profile-frame { flex-direction: column; text-align: center; }
+    .profile-actions { justify-content: center; }
+    #fixed-header { padding: 0 20px; }
+    .header-menu { gap: 15px; font-size: 0.8rem; }
+}
